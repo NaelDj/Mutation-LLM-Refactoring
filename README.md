@@ -1,6 +1,10 @@
 # Replication Package
 
-This replication package contains the modified `pom.xml` files and Maven toolchain configuration used for the thesis runs.
+This replication package contains the modified `pom.xml` files, Maven toolchain configuration, and supporting scripts used for the thesis runs.
+
+The MCP server used in the thesis is available here:
+
+https://github.com/NaelDj/PIT-MCPServer
 
 ## Setup
 
@@ -10,13 +14,12 @@ This replication package contains the modified `pom.xml` files and Maven toolcha
 
 3. Copy the provided `toolchains.xml` file to your local Maven configuration folder:
 
-   **Linux/macOS**
-   ```bash
-   ~/.m2/toolchains.xml
-````
+**Linux/macOS**
+```bash
+~/.m2/toolchains.xml
+```
 
 **Windows**
-
 ```powershell
 %USERPROFILE%\.m2\toolchains.xml
 ```
