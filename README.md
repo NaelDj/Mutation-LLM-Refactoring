@@ -6,6 +6,8 @@ The MCP server used in the thesis is available here: https://github.com/NaelDj/P
 
 The replication repository for JFreeChart is available here: https://github.com/NaelDj/mlr-jfreechart
 
+The replication repository for Bukkit is available here: https://github.com/NaelDj/mlr-bukkit
+
 ## Setup
 
 1. Download or clone the specific project release mentioned in the thesis report.
