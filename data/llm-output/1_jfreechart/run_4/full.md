@@ -14,6 +14,408 @@ Restore
 
 Thinking
 
+I'll help you refactor the class with the fourth-highest number of survived mutants to increase observability. Let me start by analyzing the PIT mutation results to identify which class we need to work on.
+
+Cline wants to use a tool on the `PIT-MCPServer` MCP server:
+
+pit_classes
+
+Auto-approve
+
+Return per-class PIT mutation scores (test strength) for a workspace. Uses the latest mutations.xml under <workspace>/target/pit-reports.A null mutationScore means the class was not covered by any tests (i.e., no mutants were executed; only NO_COVERAGE mutants exist).
+
+Arguments
+
+```json
+{
+  "workspace": "c:/Users/NatanaelDjajadi/repouni/exp_real/jfreechart"
+}
+```
+
+Response
+
+Plain TextRich DisplayMarkdown
+
+Checkpoint
+
+Compare
+
+Restore
+
+Thinking
+
+Perfect! I can see the PIT mutation results. The class with the fourth-highest number of survived mutants is __org.jfree.chart.plot.MeterPlot__ with __196 surviving mutants__.
+
+Let me gather more detailed information about which methods in MeterPlot have the most surviving mutants.
+
+Cline wants to use a tool on the `PIT-MCPServer` MCP server:
+
+pit_methods
+
+Auto-approve
+
+Return per-method mutation scores (test strength) for a given class, using the latest PIT mutations.xml under <workspace>/target/pit-reports. A null mutationScore means that method had no mutants executed by tests (covered=0; only NO_COVERAGE).
+
+Arguments
+
+```json
+{
+  "workspace": "c:/Users/NatanaelDjajadi/repouni/exp_real/jfreechart",
+  "className": "org.jfree.chart.plot.MeterPlot"
+}
+```
+
+Response
+
+Plain TextRich DisplayMarkdown
+
+Checkpoint
+
+Compare
+
+Restore
+
+Thinking
+
+Now let me examine the specific surviving mutants in the methods with the most survivors. Let me start with the `draw` method which has 71 surviving mutants:
+
+Cline wants to use a tool on the `PIT-MCPServer` MCP server:
+
+pit_survivors_for_method
+
+Auto-approve
+
+Return surviving PIT mutants (status=SURVIVED) for a specific method in a class, using the latest mutations.xml under <workspace>/target/pit-reports. Pass methodDesc (JVM descriptor) for exact overload matching; if null, results are grouped by signature. In the response, requestedMethodDesc=null means no overload was specified, and sourceFile is provided only when all survivors map to the same file.
+
+Arguments
+
+```json
+{
+  "workspace": "c:/Users/NatanaelDjajadi/repouni/exp_real/jfreechart",
+  "className": "org.jfree.chart.plot.MeterPlot",
+  "method": "draw",
+  "methodDesc": "(Ljava/awt/Graphics2D;Ljava/awt/geom/Rectangle2D;Ljava/awt/geom/Point2D;Lorg/jfree/chart/plot/PlotState;Lorg/jfree/chart/plot/PlotRenderingInfo;)V"
+}
+```
+
+Response
+
+Plain TextRich DisplayMarkdown
+
+Checkpoint
+
+Compare
+
+Restore
+
+Thinking
+
+Let me also check the `drawTick` method which has 46 surviving mutants:
+
+Cline wants to use a tool on the `PIT-MCPServer` MCP server:
+
+pit_survivors_for_method
+
+Auto-approve
+
+Return surviving PIT mutants (status=SURVIVED) for a specific method in a class, using the latest mutations.xml under <workspace>/target/pit-reports. Pass methodDesc (JVM descriptor) for exact overload matching; if null, results are grouped by signature. In the response, requestedMethodDesc=null means no overload was specified, and sourceFile is provided only when all survivors map to the same file.
+
+Arguments
+
+```json
+{
+  "workspace": "c:/Users/NatanaelDjajadi/repouni/exp_real/jfreechart",
+  "className": "org.jfree.chart.plot.MeterPlot",
+  "method": "drawTick",
+  "methodDesc": "(Ljava/awt/Graphics2D;Ljava/awt/geom/Rectangle2D;DZ)V"
+}
+```
+
+Response
+
+Plain TextRich DisplayMarkdown
+
+Checkpoint
+
+Compare
+
+Restore
+
+Thinking
+
+Cline read 2 files:
+
+src/main/java/org/jfree/chart/plot/MeterPlot.java‎
+
+src/test/java/org/jfree/chart/plot/MeterPlotTest.java‎
+
+Plan Created
+
+Based on the PIT mutation analysis, I can see that __MeterPlot__ has significant surviving mutants. Let me analyze the key findings:
+
+## Analysis Summary
+
+__MeterPlot__ has extensive surviving mutants in two main methods:
+
+- `draw()`: 73 surviving mutants
+- `drawTick()`: 46 surviving mutants
+
+The surviving mutants reveal a critical __observability problem__: the code performs complex graphical calculations and drawing operations, but tests cannot observe the actual rendering results. The current test suite (MeterPlotTest.java) only tests:
+
+- Property getters/setters
+- Equals/cloning/serialization
+- NO tests verify actual drawing correctness
+
+## Root Cause Patterns
+
+1. __VoidMethodCallMutator survivors__ (Graphics operations): Removing calls to `setPaint()`, `setStroke()`, `draw()`, `fill()` don't fail tests → drawing output not verified
+
+2. __MathMutator survivors__ (Coordinate calculations): Arithmetic operations for positioning survive → exact positions not verified
+
+3. __Conditional mutants survivors__: Boundary conditions and conditionals survive → edge cases not tested
+
+## Refactoring Plan
+
+I'll apply __Extract Method__ refactoring to separate calculation logic from drawing operations, making calculations observable and testable.
+
+### Target Areas (in priority order):
+
+__1. Tick Position Calculations__ (drawTick method, lines 1070-1081)
+
+- Extract method: `calculateTickEndpoints(Rectangle2D meterArea, double value)`
+- Returns: A data structure with the calculated coordinates
+- Enables testing: Verify correct coordinate calculations for different angles/values
+
+__2. Tick Label Positioning Logic__ (drawTick method, lines 1099-1112)
+
+- Extract method: `calculateTickLabelPosition(Rectangle2D tickLabelBounds, double valueAngle, double x, double y)`
+- Returns: Point2D with adjusted label position
+- Enables testing: Verify label positioning for different angles (especially boundary cases at 90°, 270°, etc.)
+
+__3. Needle Position Calculation__ (draw method, lines 847-853)
+
+- Extract method: `calculateNeedlePosition(Rectangle2D meterArea, double value)`
+- Returns: Data structure with needle endpoint coordinates
+- Enables testing: Verify needle points to correct angle for given values
+
+__4. Value-to-Angle Conversion__ (already public but needs better testing)
+
+- Method exists: `valueToAngle(double value)`
+- Add comprehensive tests: boundary values, range limits, various angles
+
+Each extracted method will:
+
+- Have clear inputs/outputs
+- Be package-private or public (accessible to tests)
+- Contain pure calculation logic without side effects
+- Enable direct assertions on computed values
+
+### Testing Strategy
+
+For each extracted calculation method, write tests that:
+
+- Use boundary values that trigger surviving mutants
+- Assert exact coordinate values
+- Cover different angle ranges (0-90, 90-180, etc.)
+- Test edge cases (min/max range values, special angles)
+
+This will kill mutants by making the previously unobservable internal calculations directly testable.
+
+Would you like me to proceed with this refactoring plan? I'll need to toggle to
+
+Act Mode (⌘⇧A) to implement the changes.
+
+Checkpoint
+
+Compare
+
+Restore
+
+Thinking
+
+I'll now implement the refactoring plan to increase observability of MeterPlot's internal calculations. Let me start by extracting the calculation methods from the drawing code.
+
+## Step 1: Extract Tick Position Calculation
+
+__Targeting:__ Surviving mutants in lines 1070-1081 (MathMutator on coordinate calculations)
+
+__Refactoring technique:__ Extract Method - separate coordinate calculation from drawing
+
+__Why this increases observability:__ The tick endpoint coordinates are currently computed inline during drawing. By extracting them into a separate method that returns a data structure, tests can directly verify the calculations without needing to inspect rendered graphics.
+
+Let me first create a data structure to hold tick endpoints:
+
+Cline wants to create a new file:
+
+/src/main/java/org/jfree/chart/plot/TickEndpoints.java‎
+
+Checkpoint
+
+Compare
+
+Restore
+
+Thinking
+
+Now I'll extract the tick position calculation method in MeterPlot and refactor the drawTick method to use it:
+
+Cline wants to edit this file:
+
+/src/main/java/org/jfree/chart/plot/MeterPlot.java‎
+
+1
+
+```java
+------- SEARCH
+    /**
+     * Draws a tick on the dial.
+     *
+     * @param g2  the graphics device.
+     * @param meterArea  the meter area.
+     * @param value  the tick value.
+     * @param label  a flag that controls whether a value label is drawn.
+     */
+    protected void drawTick(Graphics2D g2, Rectangle2D meterArea,
+                            double value, boolean label) {
+
+        double valueAngle = valueToAngle(value);
+
+        double meterMiddleX = meterArea.getCenterX();
+        double meterMiddleY = meterArea.getCenterY();
+
+        g2.setPaint(this.tickPaint);
+        g2.setStroke(new BasicStroke(2.0f));
+
+        double valueP2X;
+        double valueP2Y;
+
+        double radius = (meterArea.getWidth() / 2) + DEFAULT_BORDER_SIZE;
+        double radius1 = radius - 15;
+
+        double valueP1X = meterMiddleX
+                + (radius * Math.cos(Math.PI * (valueAngle / 180)));
+        double valueP1Y = meterMiddleY
+                - (radius * Math.sin(Math.PI * (valueAngle / 180)));
+
+        valueP2X = meterMiddleX
+                + (radius1 * Math.cos(Math.PI * (valueAngle / 180)));
+        valueP2Y = meterMiddleY
+                - (radius1 * Math.sin(Math.PI * (valueAngle / 180)));
+
+        Line2D.Double line = new Line2D.Double(valueP1X, valueP1Y, valueP2X,
+                valueP2Y);
+        g2.draw(line);
+=======
+    /**
+     * Calculates the start and end points for a tick mark at the specified value.
+     * This method performs the coordinate calculations without any drawing operations,
+     * making the calculation logic testable and observable.
+     *
+     * @param meterArea  the meter area.
+     * @param value  the tick value.
+     *
+     * @return The tick endpoints (never {@code null}).
+     */
+    protected TickEndpoints calculateTickEndpoints(Rectangle2D meterArea, double value) {
+        double valueAngle = valueToAngle(value);
+        
+        double meterMiddleX = meterArea.getCenterX();
+        double meterMiddleY = meterArea.getCenterY();
+        
+        double radius = (meterArea.getWidth() / 2) + DEFAULT_BORDER_SIZE;
+        double radius1 = radius - 15;
+        
+        double valueP1X = meterMiddleX
+                + (radius * Math.cos(Math.PI * (valueAngle / 180)));
+        double valueP1Y = meterMiddleY
+                - (radius * Math.sin(Math.PI * (valueAngle / 180)));
+        
+        double valueP2X = meterMiddleX
+                + (radius1 * Math.cos(Math.PI * (valueAngle / 180)));
+        double valueP2Y = meterMiddleY
+                - (radius1 * Math.sin(Math.PI * (valueAngle / 180)));
+        
+        return new TickEndpoints(valueP1X, valueP1Y, valueP2X, valueP2Y);
+    }
+
+    /**
+     * Draws a tick on the dial.
+     *
+     * @param g2  the graphics device.
+     * @param meterArea  the meter area.
+     * @param value  the tick value.
+     * @param label  a flag that controls whether a value label is drawn.
+     */
+    protected void drawTick(Graphics2D g2, Rectangle2D meterArea,
+                            double value, boolean label) {
+
+        double valueAngle = valueToAngle(value);
+
+        g2.setPaint(this.tickPaint);
+        g2.setStroke(new BasicStroke(2.0f));
+
+        TickEndpoints endpoints = calculateTickEndpoints(meterArea, value);
+        
+        Line2D.Double line = new Line2D.Double(endpoints.getX1(), endpoints.getY1(), 
+                endpoints.getX2(), endpoints.getY2());
+        g2.draw(line);
++++++++ REPLACE
+```
+
+Checkpoint
+
+Compare
+
+Restore
+
+Thinking
+
+I need to fix a compilation error - the variables `valueP2X` and `valueP2Y` are no longer available after the refactoring. Let me correct this:
+
+Cline wants to edit this file:
+
+/src/main/java/org/jfree/chart/plot/MeterPlot.java‎
+
+1
+
+```java
+------- SEARCH
+        if (this.tickLabelsVisible && label) {
+
+            String tickLabel =  this.tickLabelFormat.format(value);
+            g2.setFont(this.tickLabelFont);
+            g2.setPaint(this.tickLabelPaint);
+
+            FontMetrics fm = g2.getFontMetrics();
+            Rectangle2D tickLabelBounds
+                = TextUtils.getTextBounds(tickLabel, g2, fm);
+
+            double x = valueP2X;
+            double y = valueP2Y;
+=======
+        if (this.tickLabelsVisible && label) {
+
+            String tickLabel =  this.tickLabelFormat.format(value);
+            g2.setFont(this.tickLabelFont);
+            g2.setPaint(this.tickLabelPaint);
+
+            FontMetrics fm = g2.getFontMetrics();
+            Rectangle2D tickLabelBounds
+                = TextUtils.getTextBounds(tickLabel, g2, fm);
+
+            double x = endpoints.getX2();
+            double y = endpoints.getY2();
++++++++ REPLACE
+```
+
+Checkpoint
+
+Compare
+
+Restore
+
+Thinking
+
 Now let me verify that the refactoring didn't break anything by running the tests:
 
 Cline wants to execute this command:
@@ -68,6 +470,223 @@ Cline wants to edit this file:
 /src/test/java/org/jfree/chart/plot/MeterPlotTest.java‎
 
 1
+
+```java
+------- SEARCH
+    /**
+     * Serialize an instance, restore it, and check for equality.
+     */
+    @Test
+    public void testSerialization2() {
+        MeterPlot p1 = new MeterPlot(new DefaultValueDataset(1.23));
+        MeterPlot p2 = TestUtils.serialised(p1);
+        assertEquals(p1, p2);
+
+    }
+
+}
+=======
+    /**
+     * Serialize an instance, restore it, and check for equality.
+     */
+    @Test
+    public void testSerialization2() {
+        MeterPlot p1 = new MeterPlot(new DefaultValueDataset(1.23));
+        MeterPlot p2 = TestUtils.serialised(p1);
+        assertEquals(p1, p2);
+
+    }
+
+    /**
+     * Tests the calculateTickEndpoints method with various values to ensure
+     * coordinate calculations are correct. This test targets surviving mutants
+     * in the tick endpoint calculation logic.
+     */
+    @Test
+    public void testCalculateTickEndpoints() {
+        MeterPlot plot = new MeterPlot();
+        plot.setRange(new Range(0.0, 100.0));
+        plot.setMeterAngle(270); // Default angle
+        
+        // Create a test meter area
+        java.awt.geom.Rectangle2D meterArea = new java.awt.geom.Rectangle2D.Double(
+                100, 100, 200, 200);
+        
+        // Test with value at minimum (0)
+        TickEndpoints endpoints1 = plot.calculateTickEndpoints(meterArea, 0.0);
+        assertNotNull(endpoints1);
+        
+        // Test with value at midpoint (50)
+        TickEndpoints endpoints2 = plot.calculateTickEndpoints(meterArea, 50.0);
+        assertNotNull(endpoints2);
+        
+        // Test with value at maximum (100)
+        TickEndpoints endpoints3 = plot.calculateTickEndpoints(meterArea, 100.0);
+        assertNotNull(endpoints3);
+        
+        // The outer and inner endpoints should be different
+        assertNotEquals(endpoints1.getX1(), endpoints1.getX2());
+        assertNotEquals(endpoints1.getY1(), endpoints1.getY2());
+        
+        // Different values should produce different endpoints
+        assertFalse(endpoints1.getX1() == endpoints2.getX1() 
+                && endpoints1.getY1() == endpoints2.getY1());
+        assertFalse(endpoints2.getX1() == endpoints3.getX1() 
+                && endpoints2.getY1() == endpoints3.getY1());
+    }
+    
+    /**
+     * Tests calculateTickEndpoints for specific angle calculations to verify
+     * the mathematical operations. This targets MathMutator survivors.
+     */
+    @Test
+    public void testCalculateTickEndpointsAngles() {
+        MeterPlot plot = new MeterPlot();
+        plot.setRange(new Range(0.0, 100.0));
+        plot.setMeterAngle(270);
+        
+        java.awt.geom.Rectangle2D meterArea = new java.awt.geom.Rectangle2D.Double(
+                0, 0, 100, 100);
+        
+        double centerX = meterArea.getCenterX(); // 50
+        double centerY = meterArea.getCenterY(); // 50
+        double radius = (meterArea.getWidth() / 2) + MeterPlot.DEFAULT_BORDER_SIZE; // 53
+        double radius1 = radius - 15; // 38
+        
+        // Test at value 0 (should be at rightmost position due to valueToAngle)
+        double angle0 = plot.valueToAngle(0.0);
+        TickEndpoints endpoints0 = plot.calculateTickEndpoints(meterArea, 0.0);
+        
+        double expectedX1_0 = centerX + (radius * Math.cos(Math.PI * (angle0 / 180)));
+        double expectedY1_0 = centerY - (radius * Math.sin(Math.PI * (angle0 / 180)));
+        double expectedX2_0 = centerX + (radius1 * Math.cos(Math.PI * (angle0 / 180)));
+        double expectedY2_0 = centerY - (radius1 * Math.sin(Math.PI * (angle0 / 180)));
+        
+        assertEquals(expectedX1_0, endpoints0.getX1(), 0.001);
+        assertEquals(expectedY1_0, endpoints0.getY1(), 0.001);
+        assertEquals(expectedX2_0, endpoints0.getX2(), 0.001);
+        assertEquals(expectedY2_0, endpoints0.getY2(), 0.001);
+        
+        // Test at value 100 (should be at leftmost position)
+        double angle100 = plot.valueToAngle(100.0);
+        TickEndpoints endpoints100 = plot.calculateTickEndpoints(meterArea, 100.0);
+        
+        double expectedX1_100 = centerX + (radius * Math.cos(Math.PI * (angle100 / 180)));
+        double expectedY1_100 = centerY - (radius * Math.sin(Math.PI * (angle100 / 180)));
+        double expectedX2_100 = centerX + (radius1 * Math.cos(Math.PI * (angle100 / 180)));
+        double expectedY2_100 = centerY - (radius1 * Math.sin(Math.PI * (angle100 / 180)));
+        
+        assertEquals(expectedX1_100, endpoints100.getX1(), 0.001);
+        assertEquals(expectedY1_100, endpoints100.getY1(), 0.001);
+        assertEquals(expectedX2_100, endpoints100.getX2(), 0.001);
+        assertEquals(expectedY2_100, endpoints100.getY2(), 0.001);
+    }
+    
+    /**
+     * Tests calculateTickEndpoints with different meter angles to ensure
+     * calculations work correctly for various dial configurations.
+     */
+    @Test
+    public void testCalculateTickEndpointsDifferentAngles() {
+        java.awt.geom.Rectangle2D meterArea = new java.awt.geom.Rectangle2D.Double(
+                0, 0, 100, 100);
+        
+        // Test with 180 degree meter angle
+        MeterPlot plot180 = new MeterPlot();
+        plot180.setRange(new Range(0.0, 100.0));
+        plot180.setMeterAngle(180);
+        
+        TickEndpoints endpoints180_0 = plot180.calculateTickEndpoints(meterArea, 0.0);
+        TickEndpoints endpoints180_50 = plot180.calculateTickEndpoints(meterArea, 50.0);
+        TickEndpoints endpoints180_100 = plot180.calculateTickEndpoints(meterArea, 100.0);
+        
+        assertNotNull(endpoints180_0);
+        assertNotNull(endpoints180_50);
+        assertNotNull(endpoints180_100);
+        
+        // Verify different values produce different endpoints
+        assertFalse(endpoints180_0.equals(endpoints180_50));
+        assertFalse(endpoints180_50.equals(endpoints180_100));
+        
+        // Test with 90 degree meter angle
+        MeterPlot plot90 = new MeterPlot();
+        plot90.setRange(new Range(0.0, 100.0));
+        plot90.setMeterAngle(90);
+        
+        TickEndpoints endpoints90_0 = plot90.calculateTickEndpoints(meterArea, 0.0);
+        TickEndpoints endpoints90_100 = plot90.calculateTickEndpoints(meterArea, 100.0);
+        
+        assertNotNull(endpoints90_0);
+        assertNotNull(endpoints90_100);
+        assertFalse(endpoints90_0.equals(endpoints90_100));
+    }
+    
+    /**
+     * Tests valueToAngle method comprehensively to ensure angle calculations
+     * are correct. This targets surviving mutants in the value-to-angle conversion.
+     */
+    @Test
+    public void testValueToAngle() {
+        MeterPlot plot = new MeterPlot();
+        plot.setRange(new Range(0.0, 100.0));
+        plot.setMeterAngle(270);
+        
+        // At minimum value (0), should be at 315 degrees (baseAngle - 0)
+        double angle0 = plot.valueToAngle(0.0);
+        assertEquals(315.0, angle0, 0.001);
+        
+        // At midpoint (50), should be at center (180 degrees)
+        double angle50 = plot.valueToAngle(50.0);
+        assertEquals(180.0, angle50, 0.001);
+        
+        // At maximum value (100), should be at 45 degrees
+        double angle100 = plot.valueToAngle(100.0);
+        assertEquals(45.0, angle100, 0.001);
+        
+        // Test with different range
+        plot.setRange(new Range(50.0, 150.0));
+        double angleMin = plot.valueToAngle(50.0);
+        double angleMax = plot.valueToAngle(150.0);
+        assertEquals(315.0, angleMin, 0.001);
+        assertEquals(45.0, angleMax, 0.001);
+    }
+    
+    /**
+     * Tests valueToAngle with various meter angles to verify the calculation
+     * formula works correctly for different dial configurations.
+     */
+    @Test
+    public void testValueToAngleWithDifferentMeterAngles() {
+        MeterPlot plot = new MeterPlot();
+        plot.setRange(new Range(0.0, 100.0));
+        
+        // Test with 180 degree meter
+        plot.setMeterAngle(180);
+        double angle0_180 = plot.valueToAngle(0.0);
+        double angle100_180 = plot.valueToAngle(100.0);
+        assertEquals(180.0, angle0_180, 0.001); // baseAngle = 180
+        assertEquals(0.0, angle100_180, 0.001);  // baseAngle - 180
+        
+        // Test with 90 degree meter
+        plot.setMeterAngle(90);
+        double angle0_90 = plot.valueToAngle(0.0);
+        double angle100_90 = plot.valueToAngle(100.0);
+        assertEquals(225.0, angle0_90, 0.001);  // baseAngle = 225
+        assertEquals(135.0, angle100_90, 0.001); // baseAngle - 90
+        
+        // Test with 360 degree meter (full circle)
+        plot.setMeterAngle(360);
+        double angle0_360 = plot.valueToAngle(0.0);
+        double angle50_360 = plot.valueToAngle(50.0);
+        double angle100_360 = plot.valueToAngle(100.0);
+        assertEquals(270.0, angle0_360, 0.001);
+        assertEquals(90.0, angle50_360, 0.001);
+        assertEquals(-90.0, angle100_360, 0.001);
+    }
+
+}
++++++++ REPLACE
+```
 
 Checkpoint
 
@@ -1026,6 +1645,139 @@ Cline wants to edit this file:
 
 2
 
+```java
+------- SEARCH
+    /**
+     * Tests valueToAngle method comprehensively to ensure angle calculations
+     * are correct. This targets surviving mutants in the value-to-angle conversion.
+     */
+    @Test
+    public void testValueToAngle() {
+        MeterPlot plot = new MeterPlot();
+        plot.setRange(new Range(0.0, 100.0));
+        plot.setMeterAngle(270);
+        
+        // At minimum value (0), should be at 315 degrees (baseAngle - 0)
+        double angle0 = plot.valueToAngle(0.0);
+        assertEquals(315.0, angle0, 0.001);
+        
+        // At midpoint (50), should be at center (180 degrees)
+        double angle50 = plot.valueToAngle(50.0);
+        assertEquals(180.0, angle50, 0.001);
+        
+        // At maximum value (100), should be at 45 degrees
+        double angle100 = plot.valueToAngle(100.0);
+        assertEquals(45.0, angle100, 0.001);
+        
+        // Test with different range
+        plot.setRange(new Range(50.0, 150.0));
+        double angleMin = plot.valueToAngle(50.0);
+        double angleMax = plot.valueToAngle(150.0);
+        assertEquals(315.0, angleMin, 0.001);
+        assertEquals(45.0, angleMax, 0.001);
+    }
+=======
+    /**
+     * Tests valueToAngle method comprehensively to ensure angle calculations
+     * are correct. This targets surviving mutants in the value-to-angle conversion.
+     */
+    @Test
+    public void testValueToAngle() {
+        MeterPlot plot = new MeterPlot();
+        plot.setRange(new Range(0.0, 100.0));
+        plot.setMeterAngle(270);
+        
+        // With meterAngle=270, baseAngle = 180 + ((270-180)/2) = 225
+        // At minimum value (0), angle = 225 - 0 = 225
+        double angle0 = plot.valueToAngle(0.0);
+        assertEquals(225.0, angle0, 0.001);
+        
+        // At midpoint (50), angle = 225 - ((50/100)*270) = 225 - 135 = 90
+        double angle50 = plot.valueToAngle(50.0);
+        assertEquals(90.0, angle50, 0.001);
+        
+        // At maximum value (100), angle = 225 - 270 = -45
+        double angle100 = plot.valueToAngle(100.0);
+        assertEquals(-45.0, angle100, 0.001);
+        
+        // Test with different range - the angles should still be the same
+        plot.setRange(new Range(50.0, 150.0));
+        double angleMin = plot.valueToAngle(50.0);
+        double angleMax = plot.valueToAngle(150.0);
+        assertEquals(225.0, angleMin, 0.001);
+        assertEquals(-45.0, angleMax, 0.001);
+    }
++++++++ REPLACE
+
+------- SEARCH
+    /**
+     * Tests valueToAngle with various meter angles to verify the calculation
+     * formula works correctly for different dial configurations.
+     */
+    @Test
+    public void testValueToAngleWithDifferentMeterAngles() {
+        MeterPlot plot = new MeterPlot();
+        plot.setRange(new Range(0.0, 100.0));
+        
+        // Test with 180 degree meter
+        plot.setMeterAngle(180);
+        double angle0_180 = plot.valueToAngle(0.0);
+        double angle100_180 = plot.valueToAngle(100.0);
+        assertEquals(180.0, angle0_180, 0.001); // baseAngle = 180
+        assertEquals(0.0, angle100_180, 0.001);  // baseAngle - 180
+        
+        // Test with 90 degree meter
+        plot.setMeterAngle(90);
+        double angle0_90 = plot.valueToAngle(0.0);
+        double angle100_90 = plot.valueToAngle(100.0);
+        assertEquals(225.0, angle0_90, 0.001);  // baseAngle = 225
+        assertEquals(135.0, angle100_90, 0.001); // baseAngle - 90
+        
+        // Test with 360 degree meter (full circle)
+        plot.setMeterAngle(360);
+        double angle0_360 = plot.valueToAngle(0.0);
+        double angle50_360 = plot.valueToAngle(50.0);
+        double angle100_360 = plot.valueToAngle(100.0);
+        assertEquals(270.0, angle0_360, 0.001);
+        assertEquals(90.0, angle50_360, 0.001);
+        assertEquals(-90.0, angle100_360, 0.001);
+    }
+=======
+    /**
+     * Tests valueToAngle with various meter angles to verify the calculation
+     * formula works correctly for different dial configurations.
+     */
+    @Test
+    public void testValueToAngleWithDifferentMeterAngles() {
+        MeterPlot plot = new MeterPlot();
+        plot.setRange(new Range(0.0, 100.0));
+        
+        // Test with 180 degree meter: baseAngle = 180 + ((180-180)/2) = 180
+        plot.setMeterAngle(180);
+        double angle0_180 = plot.valueToAngle(0.0);
+        double angle100_180 = plot.valueToAngle(100.0);
+        assertEquals(180.0, angle0_180, 0.001); // 180 - 0
+        assertEquals(0.0, angle100_180, 0.001);  // 180 - 180
+        
+        // Test with 90 degree meter: baseAngle = 180 + ((90-180)/2) = 135
+        plot.setMeterAngle(90);
+        double angle0_90 = plot.valueToAngle(0.0);
+        double angle100_90 = plot.valueToAngle(100.0);
+        assertEquals(135.0, angle0_90, 0.001);  // 135 - 0
+        assertEquals(45.0, angle100_90, 0.001); // 135 - 90
+        
+        // Test with 360 degree meter: baseAngle = 180 + ((360-180)/2) = 270
+        plot.setMeterAngle(360);
+        double angle0_360 = plot.valueToAngle(0.0);
+        double angle50_360 = plot.valueToAngle(50.0);
+        double angle100_360 = plot.valueToAngle(100.0);
+        assertEquals(270.0, angle0_360, 0.001); // 270 - 0
+        assertEquals(90.0, angle50_360, 0.001);  // 270 - 180
+        assertEquals(-90.0, angle100_360, 0.001); // 270 - 360
+    }
++++++++ REPLACE
+```
+
 Checkpoint
 
 Compare
@@ -1171,11 +1923,3 @@ __After:__ By extracting `calculateTickEndpoints()` as a pure function that retu
 4. Achieve 100% mutation coverage for the mathematical operations
 
 The refactoring demonstrates how __Extract Method__ increases observability by separating testable logic (calculations) from untestable operations (graphics rendering), enabling tests to verify correctness of previously unobservable internal behavior.
-
-**View Changes**Explain Changes
-
-Auto-approve:Read, Edit, MCP
-
-Start New Task
-
-Type @ for context, / for slash commands & workflows, hold shift to drag in files/images
