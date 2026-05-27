@@ -10,10 +10,11 @@ The replication repository for Bukkit is available here: https://github.com/Nael
 
 ## Repository Structure
 
-- `data/`: contains the CSV file used for the post-run targeted-mutant analysis.
+- `data/`: contains the post-run analysis data, including CK results, LLM output, and the targeted-mutant CSV file.
 - `poms/`: contains the modified Maven `pom.xml` files and the Maven `toolchains.xml` file.
 - `prompt/`: contains the prompts used for the LLM-guided refactoring runs.
-- `tools/`: contains the scripts used to run tests and PIT mutation testing.
+- `scripts/`: contains scripts used to extract class-level and method-level readability metrics from CK output.
+- `tools/`: contains the OS-specific scripts used inside the replication repositories to run tests and PIT mutation testing.
 
 ## Setup
 
@@ -48,7 +49,7 @@ The replication repository for Bukkit is available here: https://github.com/Nael
 
 ## Running Tests and PIT
 
-The `tools` folder contains OS-specific scripts for running tests and PIT mutation testing.
+The `tools` folder contains OS-specific scripts for running tests and PIT mutation testing. These scripts are intended to be used from the root of the JFreeChart or Bukkit replication repository.
 
 **Windows**
 
@@ -63,3 +64,18 @@ tools\windows\run_pit.cmd
 ./tools/unix/run_tests.sh
 ./tools/unix/run_pit.sh
 ```
+
+## Analysis Data and Scripts
+
+The `data` folder contains post-run analysis material:
+
+- `data/ck_results/`: CK output used for the readability analysis.
+- `data/llm-output/`: LLM output from the thesis runs.
+- `data/targeted_mutants_location_and_categorized.csv`: targeted-mutant data used for the post-run analysis.
+
+The `scripts` folder contains scripts for extracting readability metrics from the CK output:
+
+- `extract_class_metrics.py`: extracts class-level before/after/delta metrics.
+- `extract_method_metrics_indiv.py`: extracts method-level before/after/delta metrics for the targeted methods.
+
+See `scripts/README.md` for the exact commands.
