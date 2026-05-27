@@ -1,12 +1,19 @@
 # Replication Package
 
-This replication package contains the modified `pom.xml` files, Maven toolchain configuration, supporting scripts, and prompts used for the thesis runs.
+This replication package contains the modified `pom.xml` files, Maven toolchain configuration, prompts, supporting scripts, and post-run analysis data used for the thesis.
 
 The MCP server used in the thesis is available here: https://github.com/NaelDj/PIT-MCPServer
 
 The replication repository for JFreeChart is available here: https://github.com/NaelDj/mlr-jfreechart
 
 The replication repository for Bukkit is available here: https://github.com/NaelDj/mlr-bukkit
+
+## Repository Structure
+
+- `data/`: contains the CSV file used for the post-run targeted-mutant analysis.
+- `poms/`: contains the modified Maven `pom.xml` files and the Maven `toolchains.xml` file.
+- `prompt/`: contains the prompts used for the LLM-guided refactoring runs.
+- `tools/`: contains the scripts used to run tests and PIT mutation testing.
 
 ## Setup
 
@@ -15,7 +22,7 @@ The replication repository for Bukkit is available here: https://github.com/Nael
    - JFreeChart: https://github.com/NaelDj/mlr-jfreechart
    - Bukkit: https://github.com/NaelDj/mlr-bukkit
 
-2. Copy the provided `toolchains.xml` file to your local Maven configuration folder:
+2. Copy the provided `toolchains.xml` file from the `poms` folder to your local Maven configuration folder:
 
    **Linux/macOS**
 
@@ -33,8 +40,26 @@ The replication repository for Bukkit is available here: https://github.com/Nael
 
 4. Install Cline through the Visual Studio Code Extension Marketplace.
 
-5. Connect the MCP server with Cline using the instructions in the MCP server repository.
+5. Clone and configure the MCP server using the instructions in the MCP server repository.
 
 6. Copy one of the prompts from the `prompt` folder into Cline while using Plan mode.
 
 7. After Plan mode is finished, switch Cline to Act mode and wait until it reports that the task is completed.
+
+## Running Tests and PIT
+
+The `tools` folder contains OS-specific scripts for running tests and PIT mutation testing.
+
+**Windows**
+
+```powershell
+tools\windows\run_tests.cmd
+tools\windows\run_pit.cmd
+```
+
+**Linux/macOS**
+
+```bash
+./tools/unix/run_tests.sh
+./tools/unix/run_pit.sh
+```
