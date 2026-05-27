@@ -73,6 +73,7 @@ The `data` folder contains post-run analysis material:
 
 - `data/ck_results/`: CK output used for the readability analysis.
 - `data/llm-output/`: LLM output from the thesis runs.
+- `data/mutation_results_by_run.csv`: run-level mutation testing results before and after the LLM-guided refactoring runs.
 - `data/targeted_mutants_location_and_categorized.csv`: targeted-mutant data used for the post-run analysis.
 
 The `scripts` folder contains scripts for extracting readability metrics from the CK output:
