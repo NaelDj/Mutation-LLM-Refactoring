@@ -3,6 +3,7 @@
 This replication package contains the modified `pom.xml` files, Maven toolchain configuration, and supporting scripts used for the thesis runs.
 
 The MCP server used in the thesis is available here: https://github.com/NaelDj/PIT-MCPServer
+
 The replication repository for JFreeChart is available here: https://github.com/NaelDj/mlr-jfreechart
 
 ## Setup
