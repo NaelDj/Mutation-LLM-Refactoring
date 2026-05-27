@@ -1,0 +1,13 @@
+experiment_id,repo,class,mutation_score_before,mutants_total_before,killed_before,survived_before,mutants_total_before_all,no_cov_before,mutation_score_after,mutants_total_after,killed_after,survived_after,mutants_total_after_all,no_cov_after,mutant_score_delta,killed_delta,survived_delta,total_delta,total_delta_all
+1,jfreechart,org.jfree.chart.plot.XYPlot,49.86%,706,352,354,983,277,52.44%,717,376,341,994,277,2.58%,24,-13,11,11
+2,jfreechart,org.jfree.chart.plot.CategoryPlot,54.68%,770,421,349,952,182,55.97%,795,445,350,953,158,1.30%,24,1,25,1
+3,jfreechart,org.jfree.chart.plot.PiePlot,36.81%,508,187,321,789,281,43.56%,528,230,298,789,261,6.75%,43,-23,20,0
+4,jfreechart,org.jfree.chart.plot.MeterPlot,25.76%,264,68,196,309,45,36.60%,265,97,168,310,45,10.85%,29,-28,1,1
+5,jfreechart,org.jfree.chart.plot.PiePlot3D,10.15%,197,20,177,369,172,15.58%,199,31,168,371,172,5.43%,11,-9,2,2
+6,jfreechart,org.jfree.chart.axis.CategoryAxis,27.69%,242,67,175,316,74,36.55%,249,91,158,315,66,8.86%,24,-17,7,-1
+7,bukkit,org.bukkit.plugin.messaging.StandardMessenger,75.00%,100,75,25,109,9,84.07%,113,95,18,122,9,9.07%,20,-7,13,13
+8,bukkit,org.bukkit.plugin.messaging.PluginMessageListenerRegistration,43.24%,37,16,21,43,6,85.19%,54,46,8,55,1,41.94%,30,-13,17,12
+9,bukkit,org.bukkit.configuration.MemorySection,90.34%,207,187,20,238,31,93.91%,230,216,14,261,31,3.57%,29,-6,23,23
+10,bukkit,org.bukkit.command.SimpleCommandMap,0.00%,15,0,15,52,37,80.65%,31,25,6,64,33,80.65%,25,-9,16,12
+11,bukkit,org.bukkit.command.Command,0.00%,12,0,12,68,56,100.00%,22,22,0,71,49,100.00%,22,-12,10,3
+12,bukkit,org.bukkit.configuration.file.FileConfiguration,31.25%,16,5,11,23,7,83.33%,24,20,4,31,7,52.08%,15,-7,8,8
