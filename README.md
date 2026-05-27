@@ -4,9 +4,11 @@ This replication package contains the modified `pom.xml` files, Maven toolchain 
 
 The MCP server used in the thesis is available here: https://github.com/NaelDj/PIT-MCP-Server
 
-The replication repository for JFreeChart is available here: https://github.com/NaelDj/JFreeChart-LLM-Refactoring
+This repository acts as the central replication package. The project-specific code changes and run branches are stored in the separate JFreeChart and Bukkit replication repositories linked below:
 
-The replication repository for Bukkit is available here: https://github.com/NaelDj/Bukkit-LLM-Refactoring
+- The replication repository for JFreeChart is available here: https://github.com/NaelDj/JFreeChart-LLM-Refactoring
+
+- The replication repository for Bukkit is available here: https://github.com/NaelDj/Bukkit-LLM-Refactoring
 
 ## Repository Structure
 
