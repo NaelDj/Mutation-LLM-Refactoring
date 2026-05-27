@@ -1,0 +1,7 @@
+repo,target_class,run,match_status,wmc_before,wmc_after,wmc_delta,maxNestedBlocksQty_before,maxNestedBlocksQty_after,maxNestedBlocksQty_delta,loc_before,loc_after,loc_delta,totalMethodsQty_before,totalMethodsQty_after,totalMethodsQty_delta,variablesQty_before,variablesQty_after,variablesQty_delta,loopQty_before,loopQty_after,loopQty_delta,cbo_before,cbo_after,cbo_delta
+bukkit,org.bukkit.plugin.messaging.StandardMessenger,p2_run1,ok,91,101,10,4,4,0,363,400,37,28,33,5,32,36,4,7,8,1,12,12,0
+bukkit,org.bukkit.plugin.messaging.PluginMessageListenerRegistration,p2_run2,ok,27,39,12,1,1,0,66,102,36,7,15,8,6,6,0,0,0,0,4,4,0
+bukkit,org.bukkit.configuration.MemorySection,p2_run3,ok,205,220,15,4,4,0,628,668,40,66,77,11,105,112,7,19,19,0,9,9,0
+bukkit,org.bukkit.command.SimpleCommandMap,p2_run4,ok,46,55,9,4,4,0,211,232,21,13,17,4,27,28,1,6,7,1,54,54,0
+bukkit,org.bukkit.command.Command,p2_run5,ok,58,61,3,3,3,0,184,193,9,27,30,3,20,20,0,4,4,0,12,12,0
+bukkit,org.bukkit.configuration.file.FileConfiguration,p2_run6,ok,21,29,8,2,2,0,74,100,26,12,20,8,14,16,2,1,1,0,5,5,0

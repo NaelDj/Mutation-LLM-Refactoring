@@ -1,0 +1,10 @@
+repo,target_class,target_method,matched_method_full,target_overload,run,match_status,wmc_delta,maxNestedBlocksQty_delta,loc_delta,parametersQty_delta,variablesQty_delta,loopQty_delta
+jfreechart,org.jfree.chart.plot.XYPlot,draw,"draw/5[java.awt.Graphics2D,java.awt.geom.Rectangle2D,java.awt.geom.Point2D,org.jfree.chart.plot.PlotState,org.jfree.chart.plot.PlotRenderingInfo]",overload1,p2_run1,ok,0,0,11,0,0,0
+jfreechart,org.jfree.chart.plot.CategoryPlot,draw,"draw/5[java.awt.Graphics2D,java.awt.geom.Rectangle2D,java.awt.geom.Point2D,org.jfree.chart.plot.PlotState,org.jfree.chart.plot.PlotRenderingInfo]",overload1,p2_run2,ok,0,0,1,0,0,0
+jfreechart,org.jfree.chart.plot.PiePlot,drawPie,"drawPie/3[java.awt.Graphics2D,java.awt.geom.Rectangle2D,org.jfree.chart.plot.PlotRenderingInfo]",overload1,p2_run3,ok,0,0,1,0,0,0
+jfreechart,org.jfree.chart.plot.MeterPlot,drawTick,"drawTick/3[java.awt.Graphics2D,java.awt.geom.Rectangle2D,double]",overload1,p2_run4,ok,0,0,0,0,0,0
+jfreechart,org.jfree.chart.plot.MeterPlot,drawTick,"drawTick/4[java.awt.Graphics2D,java.awt.geom.Rectangle2D,double,boolean]",overload2,p2_run4,ok,0,0,-9,0,-7,0
+jfreechart,org.jfree.chart.plot.PiePlot3D,drawSide,"drawSide/10[java.awt.Graphics2D,java.awt.geom.Rectangle2D,java.awt.geom.Arc2D,java.awt.geom.Area,java.awt.geom.Area,java.awt.Paint,java.awt.Paint,java.awt.Stroke,boolean,boolean]",overload1,p2_run5,ok,-1,0,-2,0,0,0
+jfreechart,org.jfree.chart.plot.PiePlot3D,isAngleAtBack,isAngleAtBack/1[double],overload1,p2_run5,ok,0,0,0,0,0,0
+jfreechart,org.jfree.chart.plot.PiePlot3D,isAngleAtFront,isAngleAtFront/1[double],overload1,p2_run5,ok,0,0,0,0,0,0
+jfreechart,org.jfree.chart.axis.CategoryAxis,drawCategoryLabels,"drawCategoryLabels/6[java.awt.Graphics2D,java.awt.geom.Rectangle2D,java.awt.geom.Rectangle2D,org.jfree.chart.axis.RectangleEdge,org.jfree.chart.axis.AxisState,org.jfree.chart.plot.PlotRenderingInfo]",overload1,p2_run6,ok,-4,0,-27,0,-3,0

@@ -1,0 +1,7 @@
+repo,target_class,run,match_status,wmc_delta,maxNestedBlocksQty_delta,loc_delta,totalMethodsQty_delta,variablesQty_delta,loopQty_delta,cbo_delta
+bukkit,org.bukkit.plugin.messaging.StandardMessenger,p2_run1,ok,10,0,37,5,4,1,0
+bukkit,org.bukkit.plugin.messaging.PluginMessageListenerRegistration,p2_run2,ok,12,0,36,8,0,0,0
+bukkit,org.bukkit.configuration.MemorySection,p2_run3,ok,15,0,40,11,7,0,0
+bukkit,org.bukkit.command.SimpleCommandMap,p2_run4,ok,9,0,21,4,1,1,0
+bukkit,org.bukkit.command.Command,p2_run5,ok,3,0,9,3,0,0,0
+bukkit,org.bukkit.configuration.file.FileConfiguration,p2_run6,ok,8,0,26,8,2,0,0

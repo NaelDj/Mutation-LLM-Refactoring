@@ -1,0 +1,7 @@
+repo,target_class,run,match_status,wmc_delta,maxNestedBlocksQty_delta,loc_delta,totalMethodsQty_delta,variablesQty_delta,loopQty_delta,cbo_delta
+jfreechart,org.jfree.chart.plot.XYPlot,p2_run1,ok,1,0,15,1,1,0,1
+jfreechart,org.jfree.chart.plot.CategoryPlot,p2_run2,ok,1,0,5,1,1,0,0
+jfreechart,org.jfree.chart.plot.PiePlot,p2_run3,ok,0,0,1,0,0,0,0
+jfreechart,org.jfree.chart.plot.MeterPlot,p2_run4,ok,1,0,3,1,2,0,1
+jfreechart,org.jfree.chart.plot.PiePlot3D,p2_run5,ok,1,0,4,1,0,0,0
+jfreechart,org.jfree.chart.axis.CategoryAxis,p2_run6,ok,1,0,4,1,1,0,1
