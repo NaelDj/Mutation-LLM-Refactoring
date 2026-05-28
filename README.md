@@ -15,7 +15,7 @@ This repository acts as the central replication package. The project-specific co
 - `data/`: contains the post-run analysis data, including mutation results, CK results, Cline conversations, and targeted-mutant data.
 - `poms/`: contains the modified Maven `pom.xml` files and the Maven `toolchains.xml` file.
 - `prompt/`: contains the main prompt used for the LLM-guided refactoring runs. The main prompt targets the class with the highest number of surviving mutants. For later runs, this was adapted by changing the target rank, for example from "highest" to "second-highest", "third-highest", or "fourth-highest". An example adapted prompt is included to show this change.
-- `scripts/`: contains scripts used to extract class-level and method-level readability metrics from CK output.
+- `scripts/`: contains scripts used to extract class-level and method-level readability metrics from CK output. The CK tool used to generate these outputs is available at https://github.com/mauricioaniche/ck.
 - `tools/`: contains the OS-specific scripts used inside the replication repositories to run tests and PIT mutation testing.
 
 ## Setup
