@@ -26,8 +26,9 @@ MODE_ALIASES = {
     "before_after_only": "before_after_only",
 }
 
-# Fill this in with your real mapping.
 # Each p2_runX should map to the class that was actually targeted in that run.
+
+# === Uncomment for JFreeChart ===
 # RUN_TO_CLASS = {
 #     "p2_run1": "org.jfree.chart.plot.XYPlot",
 #     "p2_run2": "org.jfree.chart.plot.CategoryPlot",
@@ -37,7 +38,7 @@ MODE_ALIASES = {
 #     "p2_run6": "org.jfree.chart.axis.CategoryAxis",
 # }
 
-# Updated mapping using Bukkit classes from the image
+# === Active mapping: Bukkit ===
 RUN_TO_CLASS = {
     "p2_run1": "org.bukkit.plugin.messaging.StandardMessenger",
     "p2_run2": "org.bukkit.plugin.messaging.PluginMessageListenerRegistration",
