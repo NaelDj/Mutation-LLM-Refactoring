@@ -42,6 +42,8 @@ COMBINED_OUTPUT_FILENAME = "all_method_metrics.csv"
 # - "draw/5" matches only "draw/5"
 # - "draw" matches "draw/0", "draw/1", "draw/5", etc.
 # - "draw" does not match "drawAxes"
+
+# === Uncomment for JFreeChart ===
 # RUN_TO_TARGET = {
 #     "p2_run1": {
 #         "class": "org.jfree.chart.plot.XYPlot",
@@ -69,6 +71,7 @@ COMBINED_OUTPUT_FILENAME = "all_method_metrics.csv"
 #     },
 # }
 
+# === Active mapping: Bukkit ===
 RUN_TO_TARGET = {
     "p2_run1": {
         "class": "org.bukkit.plugin.messaging.StandardMessenger",
