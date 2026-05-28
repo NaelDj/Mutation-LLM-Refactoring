@@ -43,11 +43,13 @@ This repository acts as the central replication package. The project-specific co
 
 4. Install Cline through the Visual Studio Code Extension Marketplace.
 
-5. Clone and configure the MCP server using the instructions in the MCP server repository.
+5. Configure Cline with access to an LLM provider. This can be done through a supported provider account or by using your own API key. Select the model used in the thesis runs, Claude 4.5 Sonnet, if available.
 
-6. Copy one of the prompts from the `prompt` folder into Cline while using Plan mode.
+6. Clone and configure the MCP server using the instructions in the MCP server repository.
 
-7. After Plan mode is finished, switch Cline to Act mode and wait until it reports that the task is completed.
+7. Copy one of the prompts from the `prompt` folder into Cline while using Plan mode.
+
+8. After Plan mode is finished, switch Cline to Act mode and wait until it reports that the task is completed.
 
 ## Running Tests and PIT
 
