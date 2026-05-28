@@ -1,6 +1,6 @@
 # CK Metric Extraction Scripts
 
-This folder contains scripts used to extract readability-related metrics from CK output files after the thesis runs. The CK result files used in the thesis are included under `data/ck_results/`. CK itself is not included in this repository and can be found here: https://github.com/mauricioaniche/ck.
+This folder contains scripts used to extract readability-related metrics from CK output files after the thesis runs. CK itself is not included in this repository and can be found here: https://github.com/mauricioaniche/ck.
 
 The CK result folders are included in the main replication package under:
 
