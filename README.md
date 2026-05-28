@@ -12,9 +12,9 @@ This repository acts as the central replication package. The project-specific co
 
 ## Repository Structure
 
-- `data/`: contains the post-run analysis data, including mutation results, CK results, LLM output, and targeted-mutant data.
+- `data/`: contains the post-run analysis data, including mutation results, CK results, Cline conversations, and targeted-mutant data.
 - `poms/`: contains the modified Maven `pom.xml` files and the Maven `toolchains.xml` file.
-- `prompt/`: contains the prompts used for the LLM-guided refactoring runs.
+- `prompt/`: contains the main prompt used for the LLM-guided refactoring runs. The main prompt targets the class with the highest number of surviving mutants. For later runs, this was adapted by changing the target rank, for example from "highest" to "second-highest", "third-highest", or "fourth-highest". An example adapted prompt is included to show this change.
 - `scripts/`: contains scripts used to extract class-level and method-level readability metrics from CK output.
 - `tools/`: contains the OS-specific scripts used inside the replication repositories to run tests and PIT mutation testing.
 
@@ -72,7 +72,7 @@ tools\windows\run_pit.cmd
 The `data` folder contains post-run analysis material:
 
 - `data/ck_results/`: CK output used for the readability analysis.
-- `data/llm-output/`: LLM output from the thesis runs.
+- `data/cline-conversations/`: exported Cline conversations from the thesis runs.
 - `data/mutation_results_by_run.csv`: run-level mutation testing results before and after the LLM-guided refactoring runs.
 - `data/targeted_mutants_location_and_categorized.csv`: targeted-mutant data used for the post-run analysis.
 
