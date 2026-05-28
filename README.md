@@ -12,7 +12,7 @@ This repository acts as the central replication package. The project-specific co
 
 ## Repository Structure
 
-- `data/`: contains the post-run analysis data, including CK results, LLM output, and the targeted-mutant CSV file.
+- `data/`: contains the post-run analysis data, including mutation results, CK results, LLM output, and targeted-mutant data.
 - `poms/`: contains the modified Maven `pom.xml` files and the Maven `toolchains.xml` file.
 - `prompt/`: contains the prompts used for the LLM-guided refactoring runs.
 - `scripts/`: contains scripts used to extract class-level and method-level readability metrics from CK output.
